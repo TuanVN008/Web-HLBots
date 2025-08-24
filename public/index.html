@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameBot Store - Phần mềm game chuyên nghiệp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            background: #0d1117;
+            overflow-x: hidden;
+        }
+
+        /* Language Data */
+        :root {
+            --primary-color: #00d9ff;
+            --secondary-color: #ff6b35;
+            --accent-color: #7c3aed;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        /* Animated Background */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 107, 53, 0.1) 0%, transparent 50%);
+            animation: float 15s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            background: rgba(0, 217, 255, 0.1);
+        }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 200px;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .nav-item:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .language-switcher {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .lang-btn {
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .lang-btn.active,
+        .lang-btn:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: #000;
+        }
+
+        .cart-icon {
+            position: relative;
+            background: var(--primary-color);
+            color: #000;
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+
+        /* Page Container */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Page */
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(124, 58, 237, 0.1));
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #8b949e;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: #00b8d4;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: #000;
+        }
+
+        /* Product Grid */
+        .products-section {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.1);
+        }
+
+        .product-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .product-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .product-card p {
+            color: #8b949e;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--success-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Product Detail Page */
+        .product-detail {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .product-header {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .product-info h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .product-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: #8b949e;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 1.5rem 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Shop Page */
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .package-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .package-card.featured {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .package-card.featured::before {
+            content: 'PHỔ BIẾN';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            color: #000;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .package-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .package-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .package-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .package-features li {
+            padding: 0.5rem 0;
+            color: #8b949e;
+        }
+
+        .package-features li:before {
+            content: '✓';
+            color: var(--success-color);
+            margin-right: 0.5rem;
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .payment-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1002;
+            transition: right 0.3s ease;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cart-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .close-cart {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cart-total {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .products-grid,
+            .packages-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-header {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-particles"></div>
+    
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <div class="logo-icon">🎮</div>
+                <span data-lang="siteName">GameBot Store</span>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="home" data-lang="home">Trang chủ</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-lang="pricing">Giá cả</a>
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-item" data-product="rise-of-kingdoms">Rise of Kingdoms Bot</a>
+                        <a href="#" class="dropdown-item" data-product="call-of-dragons">Call of Dragons Bot</a>
+                        <a href="#" class="dropdown-item" data-product="lords-mobile">Lords Mobile Bot</a>
+                        <a href="#" class="dropdown-item" data-product="afk-arena">AFK Arena Bot</a>
+                    </div>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-lang="download">Download</a>
+                    <div class="dropdown">
+                        <a href="https://example.com/download/rok-bot.exe" class="dropdown-item" target="_blank">Rise of Kingdoms Bot v2.1</a>
+                        <a href="https://example.com/download/cod-bot.exe" class="dropdown-item" target="_blank">Call of Dragons Bot v1.8</a>
+                        <a href="https://example.com/download/lm-bot.exe" class="dropdown-item" target="_blank">Lords Mobile Bot v3.2</a>
+                        <a href="https://example.com/download/afk-bot.exe" class="dropdown-item" target="_blank">AFK Arena Bot v1.5</a>
+                    </div>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="shop" data-lang="shop">Shop</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="https://discord.gg/gamebot" target="_blank" class="nav-link" data-lang="discord">Join Discord</a>
+                </li>
+            </ul>
+            
+            <div class="nav-actions">
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang-code="vi">VI</button>
+                    <button class="lang-btn" data-lang-code="en">EN</button>
+                    <button class="lang-btn" data-lang-code="pt">PT</button>
+                </div>
+                
+                <a href="#" class="cart-icon" id="cartToggle">
+                    🛒
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3 data-lang="cart">Giỏ hàng</h3>
+            <button class="close-cart" id="closeCart">×</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <p data-lang="emptyCart">Giỏ hàng trống</p>
+        </div>
+        <div class="cart-total" id="cartTotal" style="display: none;">
+            <h4>Total: $0</h4>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" data-lang="checkout">Thanh toán</button>
+        </div>
+    </div>
+
+    <main>
+        <!-- Home Page -->
+        <div class="page active" id="homePage">
+            <section class="hero">
+                <h1 data-lang="heroTitle">Phần mềm Game Bot Chuyên nghiệp</h1>
+                <p data-lang="heroDesc">Tự động hóa gameplay với các bot thông minh, an toàn và hiệu quả cho các game mobile phổ biến</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary" data-page="shop" data-lang="startNow">Bắt đầu ngay</a>
+                    <a href="https://discord.gg/gamebot" target="_blank" class="btn btn-secondary" data-lang="joinCommunity">Tham gia cộng đồng</a>
+                </div>
+            </section>
+
+            <section class="products-section">
+                <h2 class="section-title" data-lang="featuredProducts">Sản phẩm nổi bật</h2>
+                <div class="products-grid">
+                    <div class="product-card" data-product="rise-of-kingdoms">
+                        <div class="product-icon">⚔️</div>
+                        <h3>Rise of Kingdoms Bot</h3>
+                        <p data-lang="rokDesc">Bot tự động cho Rise of Kingdoms với đầy đủ tính năng farming, building và combat</p>
+                        <span class="product-status" data-lang="available">Có sẵn</span>
+                    </div>
+
+                    <div class="product-card" data-product="call-of-dragons">
+                        <div class="product-icon">🐉</div>
+                        <h3>Call of Dragons Bot</h3>
+                        <p data-lang="codDesc">Bot thông minh cho Call of Dragons với AI advanced và multi-account support</p>
+                        <span class="product-status" data-lang="available">Có sẵn</span>
+                    </div>
+
+                    <div class="product-card" data-product="lords-mobile">
+                        <div class="product-icon">🏰</div>
+                        <h3>Lords Mobile Bot</h3>
+                        <p data-lang="lmDesc">Automation tool mạnh mẽ cho Lords Mobile với guild management và war features</p>
+                        <span class="product-status" data-lang="available">Có sẵn</span>
+                    </div>
+
+                    <div class="product-card" data-product="afk-arena">
+                        <div class="product-icon">🗡️</div>
+                        <h3>AFK Arena Bot</h3>
+                        <p data-lang="afkDesc">Bot tối ưu cho AFK Arena với campaign auto và resource management</p>
+                        <span class="product-status" data-lang="comingSoon">Sắp ra mắt</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Shop Page -->
+        <div class="page" id="shopPage">
+            <section class="products-section">
+                <h2 class="section-title" data-lang="packages">Gói dịch vụ</h2>
+                <div class="packages-grid">
+                    <div class="package-card">
+                        <h3 class="package-title" data-lang="basicPackage">Gói Cơ bản</h3>
+                        <div class="package-price">$16</div>
+                        <ul class="package-features">
+                            <li data-lang="windows3">3 Cửa sổ game</li>
+                            <li data-lang="support30">Hỗ trợ 30 ngày</li>
+                            <li data-lang="basicFeatures">Tính năng cơ bản</li>
+                            <li data-lang="discordSupport">Discord support</li>
+                        </ul>
+                        <button class="btn btn-primary add-to-cart" data-package="basic" data-price="16" data-lang="addCart">Thêm vào giỏ</button>
+                        <div class="payment-methods">
+                            <button class="payment-btn crypto-pay">💰 Crypto Payment</button>
+                        </div>
+                    </div>
+
+                    <div class="package-card featured">
+                        <h3 class="package-title" data-lang="proPackage">Gói Pro</h3>
+                        <div class="package-price">$23</div>
+                        <ul class="package-features">
+                            <li data-lang="windows6">6 Cửa sổ game</li>
+                            <li data-lang="support60">Hỗ trợ 60 ngày</li>
+                            <li data-lang="advancedFeatures">Tính năng nâng cao</li>
+                            <li data-lang="prioritySupport">Hỗ trợ ưu tiên</li>
+                            <li data-lang="autoUpdate">Cập nhật tự động</li>
+                        </ul>
+                        <button class="btn btn-primary add-to-cart" data-package="pro" data-price="23" data-lang="addCart">Thêm vào giỏ</button>
+                        <div class="payment-methods">
+                            <button class="payment-btn">PayPal</button>
+                            <button class="payment-btn">Card</button>
+                            <button class="payment-btn">USDT</button>
+                        </div>
+                    </div>
+
+                    <div class="package-card">
+                        <h3 class="package-title" data-lang="enterprisePackage">Gói Enterprise</h3>
+                        <div class="package-price">$45</div>
+                        <ul class="package-features">
+                            <li data-lang="windowsUnlimited">Cửa sổ không giới hạn</li>
+                            <li data-lang="support365">Hỗ trợ 365 ngày</li>
+                            <li data-lang="allFeatures">Tất cả tính năng</li>
+                            <li data-lang="customScript">Script tùy chỉnh</li>
+                            <li data-lang="dedicatedSupport">Hỗ trợ riêng biệt</li>
+                        </ul>
+                        <button class="btn btn-primary add-to-cart" data-package="enterprise" data-price="45" data-lang="addCart">Thêm vào giỏ</button>
+                        <div class="payment-methods">
+                            <button class="payment-btn">PayPal</button>
+                            <button class="payment-btn">Card</button>
+                            <button class="payment-btn">USDT</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Product Detail Page -->
+        <div class="page" id="productPage">
+            <div class="product-detail">
+                <div class="product-header">
+                    <div class="product-image" id="productImage">🎮
+                    </div>
+                    <div class="product-info">
+                        <h1 id="productTitle">Call of Dragons Bot</h1>
+                        <p id="productDescription" data-lang="productDesc">Bot automation chuyên nghiệp cho Call of Dragons với đầy đủ tính năng và hỗ trợ multi-account.</p>
+                        <div class="product-tabs">
+                            <button class="tab-btn active" data-tab="overview" data-lang="overview">Tổng quan</button>
+                            <button class="tab-btn" data-tab="features" data-lang="features">Tính năng</button>
+                            <button class="tab-btn" data-tab="requirements" data-lang="requirements">Yêu cầu</button>
+                            <button class="tab-btn" data-tab="support" data-lang="support">Hỗ trợ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-tabs-content">
+                    <div class="tab-content active" id="overview">
+                        <h3 data-lang="aboutProduct">Về sản phẩm</h3>
+                        <p>Call of Dragons Bot là phần mềm automation tiên tiến được thiết kế đặc biệt cho game Call of Dragons. Với công nghệ AI và machine learning, bot có thể thực hiện các tác vụ phức tạp một cách tự động và thông minh.</p>
+                        
+                        <h4 data-lang="keyBenefits">Lợi ích chính:</h4>
+                        <ul style="color: #8b949e; margin-left: 1.5rem;">
+                            <li>Tiết kiệm thời gian và công sức</li>
+                            <li>Tối ưu hóa hiệu suất gaming</li>
+                            <li>Hỗ trợ nhiều tài khoản cùng lúc</li>
+                            <li>An toàn và không bị phát hiện</li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content" id="features">
+                        <h3 data-lang="detailedFeatures">Tính năng chi tiết</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div style="background: rgba(0,217,255,0.1); padding: 1rem; border-radius: 8px;">
+                                <h4 style="color: var(--primary-color);">🏰 Base Management</h4>
+                                <p style="color: #8b949e; font-size: 0.9rem;">Tự động xây dựng, nâng cấp building và quản lý tài nguyên</p>
+                            </div>
+                            <div style="background: rgba(124,58,237,0.1); padding: 1rem; border-radius: 8px;">
+                                <h4 style="color: var(--accent-color);">⚔️ Combat System</h4>
+                                <p style="color: #8b949e; font-size: 0.9rem;">AI chiến đấu thông minh với formation tối ưu</p>
+                            </div>
+                            <div style="background: rgba(255,107,53,0.1); padding: 1rem; border-radius: 8px;">
+                                <h4 style="color: var(--secondary-color);">🌍 Map Exploration</h4>
+                                <p style="color: #8b949e; font-size: 0.9rem;">Tự động khám phá bản đồ và thu thập tài nguyên</p>
+                            </div>
+                            <div style="background: rgba(16,185,129,0.1); padding: 1rem; border-radius: 8px;">
+                                <h4 style="color: var(--success-color);">👥 Alliance Features</h4>
+                                <p style="color: #8b949e; font-size: 0.9rem;">Tham gia hoạt động alliance và hỗ trợ đồng minh</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="requirements">
+                        <h3 data-lang="systemRequirements">Yêu cầu hệ thống</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                            <div>
+                                <h4 style="color: var(--primary-color);" data-lang="minimum">Tối thiểu:</h4>
+                                <ul style="color: #8b949e; margin-left: 1.5rem;">
+                                    <li>Windows 10 64-bit</li>
+                                    <li>RAM: 4GB</li>
+                                    <li>CPU: Intel Core i3 hoặc AMD equivalent</li>
+                                    <li>GPU: DirectX 11 compatible</li>
+                                    <li>Storage: 2GB free space</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--success-color);" data-lang="recommended">Khuyến nghị:</h4>
+                                <ul style="color: #8b949e; margin-left: 1.5rem;">
+                                    <li>Windows 11 64-bit</li>
+                                    <li>RAM: 8GB+</li>
+                                    <li>CPU: Intel Core i5+ hoặc AMD Ryzen 5+</li>
+                                    <li>GPU: Dedicated graphics card</li>
+                                    <li>Storage: 5GB free space (SSD preferred)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="support">
+                        <h3 data-lang="supportOptions">Tùy chọn hỗ trợ</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div style="background: rgba(0,217,255,0.1); padding: 1.5rem; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 2rem; margin-bottom: 1rem;">💬</div>
+                                <h4 style="color: var(--primary-color);">Discord Community</h4>
+                                <p style="color: #8b949e; font-size: 0.9rem;">24/7 community support</p>
+                                <a href="https://discord.gg/gamebot" target="_blank" class="btn btn-primary" style="margin-top: 1rem;">Join Discord</a>
+                            </div>
+                            <div style="background: rgba(16,185,129,0.1); padding: 1.5rem; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 2rem; margin-bottom: 1rem;">📧</div>
+                                <h4 style="color: var(--success-color);">Email Support</h4>
+                                <p style="color: #8b949e; font-size: 0.9rem;">Response within 24h</p>
+                                <a href="mailto:support@gamebotstore.com" class="btn btn-secondary" style="margin-top: 1rem;">Send Email</a>
+                            </div>
+                            <div style="background: rgba(255,107,53,0.1); padding: 1.5rem; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 2rem; margin-bottom: 1rem;">📚</div>
+                                <h4 style="color: var(--secondary-color);">Documentation</h4>
+                                <p style="color: #8b949e; font-size: 0.9rem;">Detailed guides & tutorials</p>
+                                <a href="#" class="btn btn-secondary" style="margin-top: 1rem;" data-lang="viewDocs">Xem tài liệu</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Language translations
+        const translations = {
+            vi: {
+                siteName: "GameBot Store",
+                home: "Trang chủ",
+                pricing: "Giá cả",
+                download: "Download",
+                shop: "Shop",
+                discord: "Join Discord",
+                cart: "Giỏ hàng",
+                emptyCart: "Giỏ hàng trống",
+                checkout: "Thanh toán",
+                heroTitle: "Phần mềm Game Bot Chuyên nghiệp",
+                heroDesc: "Tự động hóa gameplay với các bot thông minh, an toàn và hiệu quả cho các game mobile phổ biến",
+                startNow: "Bắt đầu ngay",
+                joinCommunity: "Tham gia cộng đồng",
+                featuredProducts: "Sản phẩm nổi bật",
+                rokDesc: "Bot tự động cho Rise of Kingdoms với đầy đủ tính năng farming, building và combat",
+                codDesc: "Bot thông minh cho Call of Dragons với AI advanced và multi-account support",
+                lmDesc: "Automation tool mạnh mẽ cho Lords Mobile với guild management và war features",
+                afkDesc: "Bot tối ưu cho AFK Arena với campaign auto và resource management",
+                available: "Có sẵn",
+                comingSoon: "Sắp ra mắt",
+                packages: "Gói dịch vụ",
+                basicPackage: "Gói Cơ bản",
+                proPackage: "Gói Pro",
+                enterprisePackage: "Gói Enterprise",
+                windows3: "3 Cửa sổ game",
+                windows6: "6 Cửa sổ game",
+                windowsUnlimited: "Cửa sổ không giới hạn",
+                support30: "Hỗ trợ 30 ngày",
+                support60: "Hỗ trợ 60 ngày",
+                support365: "Hỗ trợ 365 ngày",
+                basicFeatures: "Tính năng cơ bản",
+                advancedFeatures: "Tính năng nâng cao",
+                allFeatures: "Tất cả tính năng",
+                discordSupport: "Discord support",
+                prioritySupport: "Hỗ trợ ưu tiên",
+                autoUpdate: "Cập nhật tự động",
+                customScript: "Script tùy chỉnh",
+                dedicatedSupport: "Hỗ trợ riêng biệt",
+                addCart: "Thêm vào giỏ",
+                overview: "Tổng quan",
+                features: "Tính năng",
+                requirements: "Yêu cầu",
+                support: "Hỗ trợ",
+                aboutProduct: "Về sản phẩm",
+                keyBenefits: "Lợi ích chính",
+                detailedFeatures: "Tính năng chi tiết",
+                systemRequirements: "Yêu cầu hệ thống",
+                minimum: "Tối thiểu",
+                recommended: "Khuyến nghị",
+                supportOptions: "Tùy chọn hỗ trợ",
+                viewDocs: "Xem tài liệu",
+                productDesc: "Bot automation chuyên nghiệp cho Call of Dragons với đầy đủ tính năng và hỗ trợ multi-account."
+            },
+            en: {
+                siteName: "GameBot Store",
+                home: "Home",
+                pricing: "Pricing",
+                download: "Download",
+                shop: "Shop",
+                discord: "Join Discord",
+                cart: "Cart",
+                emptyCart: "Cart is empty",
+                checkout: "Checkout",
+                heroTitle: "Professional Game Bot Software",
+                heroDesc: "Automate gameplay with smart, safe and efficient bots for popular mobile games",
+                startNow: "Start Now",
+                joinCommunity: "Join Community",
+                featuredProducts: "Featured Products",
+                rokDesc: "Automatic bot for Rise of Kingdoms with full farming, building and combat features",
+                codDesc: "Smart bot for Call of Dragons with advanced AI and multi-account support",
+                lmDesc: "Powerful automation tool for Lords Mobile with guild management and war features",
+                afkDesc: "Optimized bot for AFK Arena with campaign auto and resource management",
+                available: "Available",
+                comingSoon: "Coming Soon",
+                packages: "Service Packages",
+                basicPackage: "Basic Package",
+                proPackage: "Pro Package",
+                enterprisePackage: "Enterprise Package",
+                windows3: "3 Game Windows",
+                windows6: "6 Game Windows",
+                windowsUnlimited: "Unlimited Windows",
+                support30: "30 Days Support",
+                support60: "60 Days Support",
+                support365: "365 Days Support",
+                basicFeatures: "Basic Features",
+                advancedFeatures: "Advanced Features",
+                allFeatures: "All Features",
+                discordSupport: "Discord Support",
+                prioritySupport: "Priority Support",
+                autoUpdate: "Auto Update",
+                customScript: "Custom Script",
+                dedicatedSupport: "Dedicated Support",
+                addCart: "Add to Cart",
+                overview: "Overview",
+                features: "Features",
+                requirements: "Requirements",
+                support: "Support",
+                aboutProduct: "About Product",
+                keyBenefits: "Key Benefits",
+                detailedFeatures: "Detailed Features",
+                systemRequirements: "System Requirements",
+                minimum: "Minimum",
+                recommended: "Recommended",
+                supportOptions: "Support Options",
+                viewDocs: "View Documentation",
+                productDesc: "Professional automation bot for Call of Dragons with full features and multi-account support."
+            },
+            pt: {
+                siteName: "GameBot Store",
+                home: "Início",
+                pricing: "Preços",
+                download: "Download",
+                shop: "Loja",
+                discord: "Entrar Discord",
+                cart: "Carrinho",
+                emptyCart: "Carrinho vazio",
+                checkout: "Finalizar",
+                heroTitle: "Software Profissional de Game Bot",
+                heroDesc: "Automatize a jogabilidade com bots inteligentes, seguros e eficientes para jogos mobile populares",
+                startNow: "Começar Agora",
+                joinCommunity: "Junte-se à Comunidade",
+                featuredProducts: "Produtos em Destaque",
+                rokDesc: "Bot automático para Rise of Kingdoms com recursos completos de farming, construção e combate",
+                codDesc: "Bot inteligente para Call of Dragons com IA avançada e suporte multi-conta",
+                lmDesc: "Ferramenta de automação poderosa para Lords Mobile com gerenciamento de guilda e recursos de guerra",
+                afkDesc: "Bot otimizado para AFK Arena com campanha automática e gerenciamento de recursos",
+                available: "Disponível",
+                comingSoon: "Em Breve",
+                packages: "Pacotes de Serviço",
+                basicPackage: "Pacote Básico",
+                proPackage: "Pacote Pro",
+                enterprisePackage: "Pacote Enterprise",
+                windows3: "3 Janelas de Jogo",
+                windows6: "6 Janelas de Jogo",
+                windowsUnlimited: "Janelas Ilimitadas",
+                support30: "Suporte 30 Dias",
+                support60: "Suporte 60 Dias",
+                support365: "Suporte 365 Dias",
+                basicFeatures: "Recursos Básicos",
+                advancedFeatures: "Recursos Avançados",
+                allFeatures: "Todos os Recursos",
+                discordSupport: "Suporte Discord",
+                prioritySupport: "Suporte Prioritário",
+                autoUpdate: "Atualização Automática",
+                customScript: "Script Personalizado",
+                dedicatedSupport: "Suporte Dedicado",
+                addCart: "Adicionar ao Carrinho",
+                overview: "Visão Geral",
+                features: "Recursos",
+                requirements: "Requisitos",
+                support: "Suporte",
+                aboutProduct: "Sobre o Produto",
+                keyBenefits: "Principais Benefícios",
+                detailedFeatures: "Recursos Detalhados",
+                systemRequirements: "Requisitos do Sistema",
+                minimum: "Mínimo",
+                recommended: "Recomendado",
+                supportOptions: "Opções de Suporte",
+                viewDocs: "Ver Documentação",
+                productDesc: "Bot de automação profissional para Call of Dragons com recursos completos e suporte multi-conta."
+            }
+        };
+
+        // Current language and cart
+        let currentLang = 'vi';
+        let cart = [];
+
+        // DOM Elements
+        const pages = document.querySelectorAll('.page');
+        const navLinks = document.querySelectorAll('[data-page]');
+        const productCards = document.querySelectorAll('[data-product]');
+        const cartSidebar = document.getElementById('cartSidebar');
+        const cartOverlay = document.getElementById('cartOverlay');
+        const cartItems = document.getElementById('cartItems');
+        const cartCount = document.getElementById('cartCount');
+        const cartTotal = document.getElementById('cartTotal');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLanguage();
+            setupEventListeners();
+            updateCartDisplay();
+        });
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetPage = this.getAttribute('data-page');
+                    if (targetPage) {
+                        showPage(targetPage);
+                    }
+                });
+            });
+
+            // Product cards
+            productCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const product = this.getAttribute('data-product');
+                    showProductDetail(product);
+                });
+            });
+
+            // Product dropdown links
+            document.querySelectorAll('[data-product]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const product = this.getAttribute('data-product');
+                    showProductDetail(product);
+                });
+            });
+
+            // Language switcher
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentLang = this.getAttribute('data-lang-code');
+                    updateLanguage();
+                });
+            });
+
+            // Cart
+            document.getElementById('cartToggle').addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleCart();
+            });
+
+            document.getElementById('closeCart').addEventListener('click', closeCart);
+            cartOverlay.addEventListener('click', closeCart);
+
+            // Add to cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const packageType = this.getAttribute('data-package');
+                    const price = parseFloat(this.getAttribute('data-price'));
+                    addToCart(packageType, price);
+                });
+            });
+
+            // Product tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tab = this.getAttribute('data-tab');
+                    showTab(tab);
+                });
+            });
+
+            // Payment buttons (NOWPayments integration)
+            document.querySelectorAll('.payment-btn, .crypto-pay').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const packageCard = this.closest('.package-card');
+                    if (packageCard) {
+                        const packageType = packageCard.querySelector('.add-to-cart').getAttribute('data-package');
+                        const price = packageCard.querySelector('.add-to-cart').getAttribute('data-price');
+                        initiateCryptoPayment(packageType, price);
+                    }
+                });
+            });
+        }
+
+        // Navigation functions
+        function showPage(pageId) {
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId + 'Page').classList.add('active');
+            
+            // Update URL without reload
+            history.pushState({ page: pageId }, '', `#${pageId}`);
+        }
+
+        function showProductDetail(productName) {
+            const productData = {
+                'rise-of-kingdoms': {
+                    title: 'Rise of Kingdoms Bot',
+                    icon: '⚔️',
+                    description: translations[currentLang].rokDesc
+                },
+                'call-of-dragons': {
+                    title: 'Call of Dragons Bot',
+                    icon: '🐉',
+                    description: translations[currentLang].codDesc
+                },
+                'lords-mobile': {
+                    title: 'Lords Mobile Bot',
+                    icon: '🏰',
+                    description: translations[currentLang].lmDesc
+                },
+                'afk-arena': {
+                    title: 'AFK Arena Bot',
+                    icon: '🗡️',
+                    description: translations[currentLang].afkDesc
+                }
+            };
+
+            const product = productData[productName];
+            if (product) {
+                document.getElementById('productImage').textContent = product.icon;
+                document.getElementById('productTitle').textContent = product.title;
+                document.getElementById('productDescription').textContent = product.description;
+                showPage('product');
+            }
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Cart functions
+        function toggleCart() {
+            cartSidebar.classList.toggle('open');
+            cartOverlay.classList.toggle('open');
+        }
+
+        function closeCart() {
+            cartSidebar.classList.remove('open');
+            cartOverlay.classList.remove('open');
+        }
+
+        function addToCart(packageType, price) {
+            const item = {
+                id: Date.now(),
+                package: packageType,
+                price: price
+            };
+            
+            cart.push(item);
+            updateCartDisplay();
+            
+            // Show success animation
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✓ ' + (currentLang === 'vi' ? 'Đã thêm' : currentLang === 'en' ? 'Added' : 'Adicionado');
+            btn.style.background = 'var(--success-color)';
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = 'var(--primary-color)';
+            }, 2000);
+        }
+
+        function removeFromCart(itemId) {
+            cart = cart.filter(item => item.id !== itemId);
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            cartCount.textContent = cart.length;
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `<p data-lang="emptyCart">${translations[currentLang].emptyCart}</p>`;
+                cartTotal.style.display = 'none';
+            } else {
+                let total = 0;
+                cartItems.innerHTML = cart.map(item => {
+                    total += item.price;
+                    return `
+                        <div class="cart-item">
+                            <div>
+                                <h4>${translations[currentLang][item.package + 'Package']}</h4>
+                                <p>${item.price}</p>
+                            </div>
+                            <button onclick="removeFromCart(${item.id})" style="background: var(--danger-color); border: none; color: white; padding: 0.5rem; border-radius: 4px; cursor: pointer;">×</button>
+                        </div>
+                    `;
+                }).join('');
+                
+                cartTotal.innerHTML = `
+                    <h4>Total: ${total}</h4>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" data-lang="checkout">${translations[currentLang].checkout}</button>
+                `;
+                cartTotal.style.display = 'block';
+            }
+        }
+
+        // Language functions
+        function updateLanguage() {
+            document.querySelectorAll('[data-lang]').forEach(element => {
+                const key = element.getAttribute('data-lang');
+                if (translations[currentLang][key]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = translations[currentLang][key];
+                    } else {
+                        element.textContent = translations[currentLang][key];
+                    }
+                }
+            });
+        }
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', function(e) {
+            if (e.state && e.state.page) {
+                showPage(e.state.page);
+            }
+        });
+
+        // Smooth scrolling for better UX
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Add loading states for better UX
+        function showLoading(element) {
+            const originalContent = element.innerHTML;
+            element.innerHTML = '<span class="loading"></span> Loading...';
+            
+            setTimeout(() => {
+                element.innerHTML = originalContent;
+            }, 1500);
+        }
+
+        // NOWPayments Integration
+        function initiateCryptoPayment(packageType, price) {
+            const paymentData = {
+                package: packageType,
+                amount: parseFloat(price),
+                currency: 'USD',
+                order_id: 'ORDER_' + Date.now(),
+                customer_email: 'customer@example.com' // Get from user input
+            };
+
+            // Show loading
+            const loadingModal = createLoadingModal('Creating payment invoice...');
+            document.body.appendChild(loadingModal);
+
+            // Call backend API
+            fetch('/api/create-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(paymentData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.body.removeChild(loadingModal);
+                if (data.invoice_url) {
+                    // Redirect to NOWPayments invoice
+                    window.open(data.invoice_url, '_blank');
+                    showPaymentStatusModal(data.payment_id);
+                }
+            })
+            .catch(error => {
+                document.body.removeChild(loadingModal);
+                console.error('Payment error:', error);
+                alert('Payment failed. Please try again.');
+            });
+        }
+
+        function createLoadingModal(message) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.8); display: flex; align-items: center; 
+                justify-content: center; z-index: 9999;
+            `;
+            modal.innerHTML = `
+                <div style="background: #1a1a1a; padding: 2rem; border-radius: 12px; text-align: center;">
+                    <div class="loading" style="margin-bottom: 1rem;"></div>
+                    <p style="color: white;">${message}</p>
+                </div>
+            `;
+            return modal;
+        }
+
+        function showPaymentStatusModal(paymentId) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.8); display: flex; align-items: center; 
+                justify-content: center; z-index: 9999;
+            `;
+            modal.innerHTML = `
+                <div style="background: #1a1a1a; padding: 2rem; border-radius: 12px; text-align: center; max-width: 400px;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Payment Status</h3>
+                    <p style="color: white; margin-bottom: 2rem;">Please complete your payment. We'll automatically generate your license key once payment is confirmed.</p>
+                    <div id="payment-status" style="color: #ffa500; margin-bottom: 2rem;">⏳ Waiting for payment...</div>
+                    <button onclick="checkPaymentStatus('${paymentId}')" class="btn btn-primary" style="margin-right: 1rem;">Check Status</button>
+                    <button onclick="document.body.removeChild(this.closest('div').parentElement)" class="btn btn-secondary">Close</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Auto check payment status every 30 seconds
+            const statusInterval = setInterval(() => {
+                checkPaymentStatus(paymentId, statusInterval);
+            }, 30000);
+        }
+
+        function checkPaymentStatus(paymentId, interval = null) {
+            fetch(`/api/payment-status/${paymentId}`)
+            .then(response => response.json())
+            .then(data => {
+                const statusElement = document.getElementById('payment-status');
+                if (data.status === 'finished') {
+                    statusElement.innerHTML = '✅ Payment confirmed! License key generated.';
+                    statusElement.style.color = 'var(--success-color)';
+                    if (interval) clearInterval(interval);
+                    
+                    // Show license key
+                    setTimeout(() => {
+                        showLicenseKey(data.license_key);
+                    }, 2000);
+                } else if (data.status === 'failed') {
+                    statusElement.innerHTML = '❌ Payment failed. Please try again.';
+                    statusElement.style.color = 'var(--danger-color)';
+                    if (interval) clearInterval(interval);
+                }
+            });
+        }
+
+        function showLicenseKey(licenseKey) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.9); display: flex; align-items: center; 
+                justify-content: center; z-index: 9999;
+            `;
+            modal.innerHTML = `
+                <div style="background: #1a1a1a; padding: 2rem; border-radius: 12px; text-align: center; max-width: 500px;">
+                    <h3 style="color: var(--success-color); margin-bottom: 1rem;">🎉 License Key Generated!</h3>
+                    <p style="color: white; margin-bottom: 1rem;">Your license key is ready. Please save it securely:</p>
+                    <div style="background: rgba(0,217,255,0.1); padding: 1rem; border-radius: 8px; margin: 1rem 0; border: 1px solid var(--primary-color);">
+                        <code style="color: var(--primary-color); font-size: 1.1rem; word-break: break-all;">${licenseKey}</code>
+                    </div>
+                    <button onclick="copyToClipboard('${licenseKey}')" class="btn btn-primary" style="margin-right: 1rem;">Copy Key</button>
+                    <button onclick="document.body.removeChild(this.parentElement)" class="btn btn-secondary">Close</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('License key copied to clipboard!');
+            });
+        }
+
+        // Make functions globally accessible
+        window.checkPaymentStatus = checkPaymentStatus;
+    </script>
+</body>
+</html>

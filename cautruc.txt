@@ -1,0 +1,31 @@
+gamebot-store/
+│
+├── 📄 package.json                 # Cấu hình Node.js và dependencies
+├── 📄 .env                        # Environment variables (bí mật)
+├── 📄 .gitignore                  # Git ignore file
+├── 📄 server.js                   # Backend server chính
+├── 📄 README.md                   # Hướng dẫn project
+│
+├── 📁 public/                     # Frontend files (static)
+│   ├── 📄 index.html             # Trang web chính
+│   ├── 📄 style.css              # CSS riêng biệt (optional)
+│   └── 📄 script.js              # JavaScript riêng biệt (optional)
+│
+├── 📁 routes/                     # API routes (tùy chọn)
+│   ├── 📄 payments.js            # Payment routes
+│   ├── 📄 keyauth.js             # KeyAuth routes
+│   └── 📄 products.js            # Product routes
+│
+├── 📁 utils/                      # Utility functions
+│   ├── 📄 nowpayments.js         # NOWPayments helper
+│   ├── 📄 keyauth.js             # KeyAuth helper
+│   └── 📄 logger.js              # Logging utility
+│
+├── 📁 config/                     # Configuration files
+│   ├── 📄 database.js            # Database config (future)
+│   └── 📄 constants.js           # App constants
+│
+└── 📁 logs/                       # Log files (auto-generated)
+    ├── 📄 payments.log           # Payment logs
+    ├── 📄 error.log              # Error logs
+    └── 📄 app.log                # General logs
